@@ -1,0 +1,40 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/package-solution.schema.json",
+  "solution": {
+    "name": "m-365-spfx-quick-links-client-side-solution",
+    "id": "6ccca1a7-f204-4577-9636-664f342152e1",
+    "version": "1.0.0.0",
+    "includeClientSideAssets": true,
+    "skipFeatureDeployment": true,
+    "isDomainIsolated": false,
+    "developer": {
+      "name": "",
+      "websiteUrl": "",
+      "privacyUrl": "",
+      "termsOfUseUrl": "",
+      "mpnId": "Undefined-1.21.1"
+    },
+    "metadata": {
+      "shortDescription": {
+        "default": "m365-spfx-quick-links description"
+      },
+      "longDescription": {
+        "default": "m365-spfx-quick-links description"
+      },
+      "screenshotPaths": [],
+      "videoUrl": "",
+      "categories": []
+    },
+    "features": [
+      {
+        "title": "m-365-spfx-quick-links Feature",
+        "description": "The feature that activates elements of the m-365-spfx-quick-links solution.",
+        "id": "632c590c-49ce-42c4-ae83-28f2a086104d",
+        "version": "1.0.0.0"
+      }
+    ]
+  },
+  "paths": {
+    "zippedPackage": "solution/m-365-spfx-quick-links.sppkg"
+  }
+}

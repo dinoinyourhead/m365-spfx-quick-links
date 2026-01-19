@@ -1,0 +1,22 @@
+{
+  "@microsoft/generator-sharepoint": {
+    "whichFolder": "subdir",
+    "solutionName": "m365-spfx-quick-links",
+    "environment": "spo",
+    "packageManager": "npm",
+    "componentType": "webpart",
+    "template": "react",
+    "componentName": "QuickLinks",
+    "componentDescription": "Configurable Quick Links Web Part",
+    "plusBeta": false,
+    "isCreatingSolution": true,
+    "nodeVersion": "25.3.0",
+    "sdksVersions": {},
+    "version": "1.21.1",
+    "libraryName": "m-365-spfx-quick-links",
+    "libraryId": "6ccca1a7-f204-4577-9636-664f342152e1",
+    "solutionShortDescription": "m365-spfx-quick-links description",
+    "skipFeatureDeployment": true,
+    "isDomainIsolated": false
+  }
+}
