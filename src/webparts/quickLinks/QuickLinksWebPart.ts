@@ -5,13 +5,15 @@ import {
   type IPropertyPaneConfiguration,
   PropertyPaneTextField,
   PropertyPaneToggle,
-  PropertyPaneSlider
+  PropertyPaneSlider,
+  PropertyPaneChoiceGroup // New
 } from '@microsoft/sp-property-pane';
 import { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 import { PropertyFieldCollectionData, CustomCollectionFieldType } from '@pnp/spfx-property-controls/lib/PropertyFieldCollectionData';
 import { PropertyFieldColorPicker, PropertyFieldColorPickerStyle } from '@pnp/spfx-property-controls/lib/PropertyFieldColorPicker';
 import { IQuickLink } from './components/IQuickLinksProps';
+import { CollectionFilePicker } from './components/CollectionFilePicker'; // New
 
 import * as strings from 'QuickLinksWebPartStrings';
 import QuickLinks from './components/QuickLinks';
@@ -20,7 +22,9 @@ import { IQuickLinksProps } from './components/IQuickLinksProps';
 export interface IQuickLinksWebPartProps {
   description: string;
   quickLinks: IQuickLink[];
+  webPartBgType: 'transparent' | 'color';
   webPartBgColor: string;
+  tileBgType: 'transparent' | 'color';
   tileBgColor: string;
   tileBorderColor: string;
   tileBorderRadius: number;
@@ -43,7 +47,9 @@ export default class QuickLinksWebPart extends BaseClientSideWebPart<IQuickLinks
         hasTeamsContext: !!this.context.sdks.microsoftTeams,
         userDisplayName: this.context.pageContext.user.displayName,
         quickLinks: this.properties.quickLinks || [],
+        webPartBgType: this.properties.webPartBgType || 'transparent',
         webPartBgColor: this.properties.webPartBgColor || '#ffffff',
+        tileBgType: this.properties.tileBgType || 'color',
         tileBgColor: this.properties.tileBgColor || '#f3f3f3',
         tileBorderColor: this.properties.tileBorderColor || '#eaeaea',
         tileBorderRadius: this.properties.tileBorderRadius || 4,
@@ -167,9 +173,17 @@ export default class QuickLinksWebPart extends BaseClientSideWebPart<IQuickLinks
                     },
                     {
                       id: 'iconUrl',
-                      title: 'Logo URL',
-                      type: CustomCollectionFieldType.string,
-                      required: true
+                      title: 'Logo',
+                      type: CustomCollectionFieldType.custom,
+                      onCustomRender: (field, value, onUpdate, item, itemId) => {
+                        return React.createElement(CollectionFilePicker, {
+                          context: this.context,
+                          value: value || '',
+                          onChanged: (url: string) => {
+                            onUpdate(field.id, url);
+                          }
+                        });
+                      }
                     }
                   ],
                   disabled: false
@@ -179,9 +193,16 @@ export default class QuickLinksWebPart extends BaseClientSideWebPart<IQuickLinks
             {
               groupName: "Styling",
               groupFields: [
-                PropertyFieldColorPicker('webPartBgColor', {
+                PropertyPaneChoiceGroup('webPartBgType', {
+                  label: 'Web Part Background By',
+                  options: [
+                    { key: 'transparent', text: 'Transparent', iconProps: { iconName: 'Blocked' } },
+                    { key: 'color', text: 'Color', iconProps: { iconName: 'Color' } }
+                  ]
+                }),
+                this.properties.webPartBgType === 'color' && PropertyFieldColorPicker('webPartBgColor', {
                   key: 'webPartBgColor',
-                  label: 'Web Part Background',
+                  label: 'Web Part Background Color',
                   selectedColor: this.properties.webPartBgColor,
                   onPropertyChange: this.onPropertyPaneFieldChanged,
                   properties: this.properties,
@@ -189,9 +210,16 @@ export default class QuickLinksWebPart extends BaseClientSideWebPart<IQuickLinks
                   debounce: 1000,
                   style: PropertyFieldColorPickerStyle.Inline
                 }),
-                PropertyFieldColorPicker('tileBgColor', {
+                PropertyPaneChoiceGroup('tileBgType', {
+                  label: 'Tile Background By',
+                  options: [
+                    { key: 'transparent', text: 'Transparent', iconProps: { iconName: 'Blocked' } },
+                    { key: 'color', text: 'Color', iconProps: { iconName: 'Color' } }
+                  ]
+                }),
+                this.properties.tileBgType === 'color' && PropertyFieldColorPicker('tileBgColor', {
                   key: 'tileBgColor',
-                  label: 'Tile Background',
+                  label: 'Tile Background Color',
                   selectedColor: this.properties.tileBgColor,
                   onPropertyChange: this.onPropertyPaneFieldChanged,
                   properties: this.properties,

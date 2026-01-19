@@ -11,7 +11,9 @@ export interface IQuickLinksProps {
   hasTeamsContext: boolean;
   userDisplayName: string;
   quickLinks: IQuickLink[];
+  webPartBgType: 'transparent' | 'color'; // New
   webPartBgColor: string;
+  tileBgType: 'transparent' | 'color'; // New
   tileBgColor: string;
   tileBorderColor: string;
   tileBorderRadius: number;

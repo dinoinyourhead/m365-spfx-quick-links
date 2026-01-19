@@ -4,9 +4,11 @@ import type { IQuickLinksProps } from './IQuickLinksProps';
 
 export default class QuickLinks extends React.Component<IQuickLinksProps> {
   public render(): React.ReactElement<IQuickLinksProps> {
+    const webPartBg = this.props.webPartBgType === 'transparent' ? 'transparent' : this.props.webPartBgColor;
+    const tileBg = this.props.tileBgType === 'transparent' ? 'transparent' : this.props.tileBgColor;
 
     return (
-      <section className={styles.quickLinks} style={{ backgroundColor: this.props.webPartBgColor }}>
+      <section className={styles.quickLinks} style={{ backgroundColor: webPartBg }}>
         <div className={styles.grid}>
           {this.props.quickLinks && this.props.quickLinks.map((link, index) => (
             <a
@@ -16,7 +18,7 @@ export default class QuickLinks extends React.Component<IQuickLinksProps> {
               target="_blank"
               rel="noreferrer"
               style={{
-                backgroundColor: this.props.tileBgColor,
+                backgroundColor: tileBg,
                 borderColor: this.props.tileBorderColor,
                 borderRadius: `${this.props.tileBorderRadius}px`
               }}
