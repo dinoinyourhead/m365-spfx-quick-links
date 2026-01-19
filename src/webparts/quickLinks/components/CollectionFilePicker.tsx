@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { FilePicker, IFilePickerResult } from '@pnp/spfx-controls-react/lib/FilePicker';
-import { PrimaryButton, TextField, IconButton } from '@fluentui/react';
+import { TextField, IconButton } from '@fluentui/react';
 
 export interface ICollectionFilePickerProps {
     context: any; // Allow BaseComponentContext
@@ -42,7 +42,7 @@ export const CollectionFilePicker: React.FC<ICollectionFilePickerProps> = (props
                 buttonLabel="Select Logo"
                 buttonIcon="FileImage"
                 onSave={onFileChange}
-                onChanged={onFileChange}
+                onChange={onFileChange}
                 context={props.context}
                 hideWebSearchTab={true}
                 hideStockImages={false}

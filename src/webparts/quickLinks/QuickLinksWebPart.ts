@@ -196,11 +196,11 @@ export default class QuickLinksWebPart extends BaseClientSideWebPart<IQuickLinks
                 PropertyPaneChoiceGroup('webPartBgType', {
                   label: 'Web Part Background By',
                   options: [
-                    { key: 'transparent', text: 'Transparent', iconProps: { iconName: 'Blocked' } },
-                    { key: 'color', text: 'Color', iconProps: { iconName: 'Color' } }
+                    { key: 'transparent', text: 'Transparent' },
+                    { key: 'color', text: 'Color' }
                   ]
                 }),
-                this.properties.webPartBgType === 'color' && PropertyFieldColorPicker('webPartBgColor', {
+                ...(this.properties.webPartBgType === 'color' ? [PropertyFieldColorPicker('webPartBgColor', {
                   key: 'webPartBgColor',
                   label: 'Web Part Background Color',
                   selectedColor: this.properties.webPartBgColor,
@@ -209,15 +209,15 @@ export default class QuickLinksWebPart extends BaseClientSideWebPart<IQuickLinks
                   disabled: false,
                   debounce: 1000,
                   style: PropertyFieldColorPickerStyle.Inline
-                }),
+                })] : []),
                 PropertyPaneChoiceGroup('tileBgType', {
                   label: 'Tile Background By',
                   options: [
-                    { key: 'transparent', text: 'Transparent', iconProps: { iconName: 'Blocked' } },
-                    { key: 'color', text: 'Color', iconProps: { iconName: 'Color' } }
+                    { key: 'transparent', text: 'Transparent' },
+                    { key: 'color', text: 'Color' }
                   ]
                 }),
-                this.properties.tileBgType === 'color' && PropertyFieldColorPicker('tileBgColor', {
+                ...(this.properties.tileBgType === 'color' ? [PropertyFieldColorPicker('tileBgColor', {
                   key: 'tileBgColor',
                   label: 'Tile Background Color',
                   selectedColor: this.properties.tileBgColor,
@@ -226,7 +226,7 @@ export default class QuickLinksWebPart extends BaseClientSideWebPart<IQuickLinks
                   disabled: false,
                   debounce: 1000,
                   style: PropertyFieldColorPickerStyle.Inline
-                }),
+                })] : []),
                 PropertyFieldColorPicker('tileBorderColor', {
                   key: 'tileBorderColor',
                   label: 'Tile Border Color',
