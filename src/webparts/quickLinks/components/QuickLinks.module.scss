@@ -5,30 +5,45 @@
   padding: 1em;
   color: "[theme:bodyText, default: #323130]";
   color: var(--bodyText);
-  &.teams {
-    font-family: $ms-font-family-fallbacks;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  
+  /* Responsive: 1 column on mobile if needed, but requirements say "Always 3 tiles in a row" - adhering to reqs strictly first, but 3 on mobile might be tight.
+     User constraint: "In einer Reihe sind immer 3 Kacheln" -> Keeping it strictly 3. */
+}
+
+.tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-style: solid;
+  border-width: 1px;
+  padding: 20px;
+  text-decoration: none;
+  color: inherit;
+  transition: box-shadow 0.2s, transform 0.2s;
+  box-sizing: border-box;
+  aspect-ratio: 1 / 1; /* Square tiles as per requirement "Höhe und Breite der Kacheln ist gleich" */
+
+  &:hover {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    transform: translateY(-2px);
   }
 }
 
-.welcome {
+.icon {
+  object-fit: contain;
+  margin-bottom: 10px;
+}
+
+.title {
+  font-size: 16px;
+  font-weight: 600;
   text-align: center;
-}
-
-.welcomeImage {
-  width: 100%;
-  max-width: 420px;
-}
-
-.links {
-  a {
-    text-decoration: none;
-    color: "[theme:link, default:#03787c]";
-    color: var(--link); // note: CSS Custom Properties support is limited to modern browsers only
-
-    &:hover {
-      text-decoration: underline;
-      color: "[theme:linkHovered, default: #014446]";
-      color: var(--linkHovered); // note: CSS Custom Properties support is limited to modern browsers only
-    }
-  }
+  word-break: break-word;
 }

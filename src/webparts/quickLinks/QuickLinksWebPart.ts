@@ -3,10 +3,15 @@ import * as ReactDom from 'react-dom';
 import { Version } from '@microsoft/sp-core-library';
 import {
   type IPropertyPaneConfiguration,
-  PropertyPaneTextField
+  PropertyPaneTextField,
+  PropertyPaneToggle,
+  PropertyPaneSlider
 } from '@microsoft/sp-property-pane';
 import { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
+import { PropertyFieldCollectionData, CustomCollectionFieldType } from '@pnp/spfx-property-controls/lib/PropertyFieldCollectionData';
+import { PropertyFieldColorPicker, PropertyFieldColorPickerStyle } from '@pnp/spfx-property-controls/lib/PropertyFieldColorPicker';
+import { IQuickLink } from './components/IQuickLinksProps';
 
 import * as strings from 'QuickLinksWebPartStrings';
 import QuickLinks from './components/QuickLinks';
@@ -14,6 +19,13 @@ import { IQuickLinksProps } from './components/IQuickLinksProps';
 
 export interface IQuickLinksWebPartProps {
   description: string;
+  quickLinks: IQuickLink[];
+  webPartBgColor: string;
+  tileBgColor: string;
+  tileBorderColor: string;
+  tileBorderRadius: number;
+  showTitle: boolean;
+  iconSize: number;
 }
 
 export default class QuickLinksWebPart extends BaseClientSideWebPart<IQuickLinksWebPartProps> {
@@ -29,7 +41,14 @@ export default class QuickLinksWebPart extends BaseClientSideWebPart<IQuickLinks
         isDarkTheme: this._isDarkTheme,
         environmentMessage: this._environmentMessage,
         hasTeamsContext: !!this.context.sdks.microsoftTeams,
-        userDisplayName: this.context.pageContext.user.displayName
+        userDisplayName: this.context.pageContext.user.displayName,
+        quickLinks: this.properties.quickLinks || [],
+        webPartBgColor: this.properties.webPartBgColor || '#ffffff',
+        tileBgColor: this.properties.tileBgColor || '#f3f3f3',
+        tileBorderColor: this.properties.tileBorderColor || '#eaeaea',
+        tileBorderRadius: this.properties.tileBorderRadius || 4,
+        showTitle: this.properties.showTitle !== false,
+        iconSize: this.properties.iconSize || 50
       }
     );
 
@@ -110,6 +129,85 @@ export default class QuickLinksWebPart extends BaseClientSideWebPart<IQuickLinks
               groupFields: [
                 PropertyPaneTextField('description', {
                   label: strings.DescriptionFieldLabel
+                }),
+                PropertyPaneToggle('showTitle', {
+                  label: "Show Title",
+                  checked: this.properties.showTitle !== false
+                }),
+                PropertyPaneSlider('tileBorderRadius', {
+                  label: "Tile Border Radius",
+                  min: 0,
+                  max: 50,
+                  value: this.properties.tileBorderRadius || 4
+                }),
+                PropertyPaneSlider('iconSize', {
+                  label: "Logo Size (px)",
+                  min: 20,
+                  max: 150,
+                  value: this.properties.iconSize || 50
+                }),
+                PropertyFieldCollectionData('quickLinks', {
+                  key: 'quickLinks',
+                  label: 'Quick Links Data',
+                  panelHeader: 'Manage Quick Links',
+                  manageBtnLabel: 'Manage Links',
+                  value: this.properties.quickLinks,
+                  fields: [
+                    {
+                      id: 'title',
+                      title: 'Title',
+                      type: CustomCollectionFieldType.string,
+                      required: true
+                    },
+                    {
+                      id: 'url',
+                      title: 'URL',
+                      type: CustomCollectionFieldType.string,
+                      required: true
+                    },
+                    {
+                      id: 'iconUrl',
+                      title: 'Logo URL',
+                      type: CustomCollectionFieldType.string,
+                      required: true
+                    }
+                  ],
+                  disabled: false
+                })
+              ]
+            },
+            {
+              groupName: "Styling",
+              groupFields: [
+                PropertyFieldColorPicker('webPartBgColor', {
+                  key: 'webPartBgColor',
+                  label: 'Web Part Background',
+                  selectedColor: this.properties.webPartBgColor,
+                  onPropertyChange: this.onPropertyPaneFieldChanged,
+                  properties: this.properties,
+                  disabled: false,
+                  debounce: 1000,
+                  style: PropertyFieldColorPickerStyle.Inline
+                }),
+                PropertyFieldColorPicker('tileBgColor', {
+                  key: 'tileBgColor',
+                  label: 'Tile Background',
+                  selectedColor: this.properties.tileBgColor,
+                  onPropertyChange: this.onPropertyPaneFieldChanged,
+                  properties: this.properties,
+                  disabled: false,
+                  debounce: 1000,
+                  style: PropertyFieldColorPickerStyle.Inline
+                }),
+                PropertyFieldColorPicker('tileBorderColor', {
+                  key: 'tileBorderColor',
+                  label: 'Tile Border Color',
+                  selectedColor: this.properties.tileBorderColor,
+                  onPropertyChange: this.onPropertyPaneFieldChanged,
+                  properties: this.properties,
+                  disabled: false,
+                  debounce: 1000,
+                  style: PropertyFieldColorPickerStyle.Inline
                 })
               ]
             }

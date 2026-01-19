@@ -1,41 +1,42 @@
 import * as React from 'react';
 import styles from './QuickLinks.module.scss';
 import type { IQuickLinksProps } from './IQuickLinksProps';
-import { escape } from '@microsoft/sp-lodash-subset';
 
 export default class QuickLinks extends React.Component<IQuickLinksProps> {
   public render(): React.ReactElement<IQuickLinksProps> {
-    const {
-      description,
-      isDarkTheme,
-      environmentMessage,
-      hasTeamsContext,
-      userDisplayName
-    } = this.props;
 
     return (
-      <section className={`${styles.quickLinks} ${hasTeamsContext ? styles.teams : ''}`}>
-        <div className={styles.welcome}>
-          <img alt="" src={isDarkTheme ? require('../assets/welcome-dark.png') : require('../assets/welcome-light.png')} className={styles.welcomeImage} />
-          <h2>Well done, {escape(userDisplayName)}!</h2>
-          <div>{environmentMessage}</div>
-          <div>Web part property value: <strong>{escape(description)}</strong></div>
-        </div>
-        <div>
-          <h3>Welcome to SharePoint Framework!</h3>
-          <p>
-            The SharePoint Framework (SPFx) is a extensibility model for Microsoft Viva, Microsoft Teams and SharePoint. It&#39;s the easiest way to extend Microsoft 365 with automatic Single Sign On, automatic hosting and industry standard tooling.
-          </p>
-          <h4>Learn more about SPFx development:</h4>
-          <ul className={styles.links}>
-            <li><a href="https://aka.ms/spfx" target="_blank" rel="noreferrer">SharePoint Framework Overview</a></li>
-            <li><a href="https://aka.ms/spfx-yeoman-graph" target="_blank" rel="noreferrer">Use Microsoft Graph in your solution</a></li>
-            <li><a href="https://aka.ms/spfx-yeoman-teams" target="_blank" rel="noreferrer">Build for Microsoft Teams using SharePoint Framework</a></li>
-            <li><a href="https://aka.ms/spfx-yeoman-viva" target="_blank" rel="noreferrer">Build for Microsoft Viva Connections using SharePoint Framework</a></li>
-            <li><a href="https://aka.ms/spfx-yeoman-store" target="_blank" rel="noreferrer">Publish SharePoint Framework applications to the marketplace</a></li>
-            <li><a href="https://aka.ms/spfx-yeoman-api" target="_blank" rel="noreferrer">SharePoint Framework API reference</a></li>
-            <li><a href="https://aka.ms/m365pnp" target="_blank" rel="noreferrer">Microsoft 365 Developer Community</a></li>
-          </ul>
+      <section className={styles.quickLinks} style={{ backgroundColor: this.props.webPartBgColor }}>
+        <div className={styles.grid}>
+          {this.props.quickLinks && this.props.quickLinks.map((link, index) => (
+            <a
+              key={index}
+              href={link.url}
+              className={styles.tile}
+              target="_blank"
+              rel="noreferrer"
+              style={{
+                backgroundColor: this.props.tileBgColor,
+                borderColor: this.props.tileBorderColor,
+                borderRadius: `${this.props.tileBorderRadius}px`
+              }}
+            >
+              {link.iconUrl && (
+                <img
+                  src={link.iconUrl}
+                  className={styles.icon}
+                  alt={link.title}
+                  style={{ height: `${this.props.iconSize}px`, maxHeight: '80%' }}
+                />
+              )}
+              {this.props.showTitle && (
+                <span className={styles.title}>{link.title}</span>
+              )}
+            </a>
+          ))}
+          {(!this.props.quickLinks || this.props.quickLinks.length === 0) && (
+            <div>Please configure Quick Links in the properties pane.</div>
+          )}
         </div>
       </section>
     );
