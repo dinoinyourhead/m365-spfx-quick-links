@@ -11,9 +11,9 @@ import {
 import { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
 import { PropertyFieldCollectionData, CustomCollectionFieldType } from '@pnp/spfx-property-controls/lib/PropertyFieldCollectionData';
-import { PropertyFieldColorPicker, PropertyFieldColorPickerStyle } from '@pnp/spfx-property-controls/lib/PropertyFieldColorPicker';
 import { IQuickLink } from './components/IQuickLinksProps';
-import { CollectionFilePicker } from './components/CollectionFilePicker'; // New
+import { CollectionFilePicker } from './components/CollectionFilePicker';
+import { PropertyPaneColorPickerField } from './PropertyPaneColorPickerField';
 
 import * as strings from 'QuickLinksWebPartStrings';
 import QuickLinks from './components/QuickLinks';
@@ -26,10 +26,14 @@ export interface IQuickLinksWebPartProps {
   webPartBgColor: string;
   tileBgType: 'transparent' | 'color';
   tileBgColor: string;
+  tileBorderType: 'transparent' | 'color';
   tileBorderColor: string;
   tileBorderRadius: number;
+  tileShadow: boolean;
   showTitle: boolean;
   iconSize: number;
+  titleColor: string;
+  titleFontSize: number;
 }
 
 export default class QuickLinksWebPart extends BaseClientSideWebPart<IQuickLinksWebPartProps> {
@@ -51,10 +55,14 @@ export default class QuickLinksWebPart extends BaseClientSideWebPart<IQuickLinks
         webPartBgColor: this.properties.webPartBgColor || '#ffffff',
         tileBgType: this.properties.tileBgType || 'color',
         tileBgColor: this.properties.tileBgColor || '#f3f3f3',
+        tileBorderType: this.properties.tileBorderType || 'color',
         tileBorderColor: this.properties.tileBorderColor || '#eaeaea',
         tileBorderRadius: this.properties.tileBorderRadius || 4,
+        tileShadow: this.properties.tileShadow !== false, // Default true
         showTitle: this.properties.showTitle !== false,
-        iconSize: this.properties.iconSize || 50
+        iconSize: this.properties.iconSize || 40,
+        titleColor: this.properties.titleColor || '#333333',
+        titleFontSize: this.properties.titleFontSize || 14
       }
     );
 
@@ -140,6 +148,10 @@ export default class QuickLinksWebPart extends BaseClientSideWebPart<IQuickLinks
                   label: "Show Title",
                   checked: this.properties.showTitle !== false
                 }),
+                PropertyPaneToggle('tileShadow', {
+                  label: "Tile Shadow",
+                  checked: this.properties.tileShadow !== false
+                }),
                 PropertyPaneSlider('tileBorderRadius', {
                   label: "Tile Border Radius",
                   min: 0,
@@ -147,16 +159,26 @@ export default class QuickLinksWebPart extends BaseClientSideWebPart<IQuickLinks
                   value: this.properties.tileBorderRadius || 4
                 }),
                 PropertyPaneSlider('iconSize', {
-                  label: "Logo Size (px)",
-                  min: 20,
-                  max: 150,
-                  value: this.properties.iconSize || 50
+                  label: "Logo Size (%)",
+                  min: 10,
+                  max: 70,
+                  value: this.properties.iconSize || 40
+                }),
+                PropertyPaneSlider('titleFontSize', {
+                  label: "Title Font Size (px)",
+                  min: 10,
+                  max: 24,
+                  value: this.properties.titleFontSize || 14
                 }),
                 PropertyFieldCollectionData('quickLinks', {
                   key: 'quickLinks',
                   label: 'Quick Links Data',
                   panelHeader: 'Manage Quick Links',
                   manageBtnLabel: 'Manage Links',
+                  saveBtnLabel: 'Save',
+                  saveAndAddBtnLabel: 'Save & Add Another',
+                  cancelBtnLabel: 'Cancel',
+                  enableSorting: true, // Enables drag & drop reordering
                   value: this.properties.quickLinks,
                   fields: [
                     {
@@ -179,7 +201,7 @@ export default class QuickLinksWebPart extends BaseClientSideWebPart<IQuickLinks
                         return React.createElement(CollectionFilePicker, {
                           context: this.context,
                           value: value || '',
-                          onChanged: (url: string) => {
+                          onChange: (url: string) => {
                             onUpdate(field.id, url);
                           }
                         });
@@ -200,15 +222,14 @@ export default class QuickLinksWebPart extends BaseClientSideWebPart<IQuickLinks
                     { key: 'color', text: 'Color' }
                   ]
                 }),
-                ...(this.properties.webPartBgType === 'color' ? [PropertyFieldColorPicker('webPartBgColor', {
+                ...(this.properties.webPartBgType === 'color' ? [PropertyPaneColorPickerField('webPartBgColor', {
                   key: 'webPartBgColor',
                   label: 'Web Part Background Color',
-                  selectedColor: this.properties.webPartBgColor,
-                  onPropertyChange: this.onPropertyPaneFieldChanged,
-                  properties: this.properties,
-                  disabled: false,
-                  debounce: 1000,
-                  style: PropertyFieldColorPickerStyle.Inline
+                  value: this.properties.webPartBgColor || '#ffffff',
+                  onPropertyChange: (propertyPath: string, newValue: string) => {
+                    this.properties.webPartBgColor = newValue;
+                    this.render();
+                  }
                 })] : []),
                 PropertyPaneChoiceGroup('tileBgType', {
                   label: 'Tile Background By',
@@ -217,25 +238,39 @@ export default class QuickLinksWebPart extends BaseClientSideWebPart<IQuickLinks
                     { key: 'color', text: 'Color' }
                   ]
                 }),
-                ...(this.properties.tileBgType === 'color' ? [PropertyFieldColorPicker('tileBgColor', {
+                ...(this.properties.tileBgType === 'color' ? [PropertyPaneColorPickerField('tileBgColor', {
                   key: 'tileBgColor',
                   label: 'Tile Background Color',
-                  selectedColor: this.properties.tileBgColor,
-                  onPropertyChange: this.onPropertyPaneFieldChanged,
-                  properties: this.properties,
-                  disabled: false,
-                  debounce: 1000,
-                  style: PropertyFieldColorPickerStyle.Inline
+                  value: this.properties.tileBgColor || '#f3f3f3',
+                  onPropertyChange: (propertyPath: string, newValue: string) => {
+                    this.properties.tileBgColor = newValue;
+                    this.render();
+                  }
                 })] : []),
-                PropertyFieldColorPicker('tileBorderColor', {
+                PropertyPaneChoiceGroup('tileBorderType', {
+                  label: 'Tile Border By',
+                  options: [
+                    { key: 'transparent', text: 'Transparent' },
+                    { key: 'color', text: 'Color' }
+                  ]
+                }),
+                ...(this.properties.tileBorderType === 'color' ? [PropertyPaneColorPickerField('tileBorderColor', {
                   key: 'tileBorderColor',
                   label: 'Tile Border Color',
-                  selectedColor: this.properties.tileBorderColor,
-                  onPropertyChange: this.onPropertyPaneFieldChanged,
-                  properties: this.properties,
-                  disabled: false,
-                  debounce: 1000,
-                  style: PropertyFieldColorPickerStyle.Inline
+                  value: this.properties.tileBorderColor || '#eaeaea',
+                  onPropertyChange: (propertyPath: string, newValue: string) => {
+                    this.properties.tileBorderColor = newValue;
+                    this.render();
+                  }
+                })] : []),
+                PropertyPaneColorPickerField('titleColor', {
+                  key: 'titleColor',
+                  label: 'Link Title Color',
+                  value: this.properties.titleColor || '#333333',
+                  onPropertyChange: (propertyPath: string, newValue: string) => {
+                    this.properties.titleColor = newValue;
+                    this.render();
+                  }
                 })
               ]
             }

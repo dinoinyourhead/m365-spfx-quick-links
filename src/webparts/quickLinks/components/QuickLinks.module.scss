@@ -2,7 +2,8 @@
 
 .quickLinks {
   overflow: hidden;
-  padding: 1em;
+  padding: 0 0 8px 0;
+  /* Bottom padding for shadow visibility */
   color: "[theme:bodyText, default: #323130]";
   color: var(--bodyText);
 }
@@ -10,10 +11,13 @@
 .grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
-  
-  /* Responsive: 1 column on mobile if needed, but requirements say "Always 3 tiles in a row" - adhering to reqs strictly first, but 3 on mobile might be tight.
-     User constraint: "In einer Reihe sind immer 3 Kacheln" -> Keeping it strictly 3. */
+  gap: 16px;
+
+  @media (max-width: 600px) {
+    grid-template-columns: repeat(2, 1fr);
+    /* 2 on very small screens */
+    gap: 12px;
+  }
 }
 
 .tile {
@@ -23,22 +27,33 @@
   justify-content: center;
   border-style: solid;
   border-width: 1px;
-  padding: 20px;
+  padding: 2px;
   text-decoration: none;
   color: inherit;
   transition: box-shadow 0.2s, transform 0.2s;
   box-sizing: border-box;
-  aspect-ratio: 1 / 1; /* Square tiles as per requirement "Höhe und Breite der Kacheln ist gleich" */
+  width: 100%;
+  /* Fill grid column - WIDTH drives sizing */
+  aspect-ratio: 1 / 1;
+  /* Height follows from width */
+  overflow: hidden;
+  /* Prevent content from expanding tile */
 
   &:hover {
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     transform: translateY(-2px);
   }
 }
 
 .icon {
+  flex-shrink: 1;
+  /* Allow shrinking if needed */
   object-fit: contain;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
+  max-width: 80%;
+  /* Relative to tile, not absolute */
+  max-height: 60%;
+  /* Relative to tile height */
 }
 
 .title {

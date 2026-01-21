@@ -11,12 +11,16 @@ export interface IQuickLinksProps {
   hasTeamsContext: boolean;
   userDisplayName: string;
   quickLinks: IQuickLink[];
-  webPartBgType: 'transparent' | 'color'; // New
+  webPartBgType: 'transparent' | 'color';
   webPartBgColor: string;
-  tileBgType: 'transparent' | 'color'; // New
+  tileBgType: 'transparent' | 'color';
   tileBgColor: string;
+  tileBorderType: 'transparent' | 'color';
   tileBorderColor: string;
   tileBorderRadius: number;
+  tileShadow: boolean; // New: Enable box shadow on tiles
   showTitle: boolean;
   iconSize: number;
+  titleColor: string;
+  titleFontSize: number;
 }
