@@ -22,6 +22,7 @@ import { IQuickLinksProps } from './components/IQuickLinksProps';
 export interface IQuickLinksWebPartProps {
   description: string;
   quickLinks: IQuickLink[];
+  listLinks: IQuickLink[]; // List-style links
   webPartBgType: 'transparent' | 'color';
   webPartBgColor: string;
   tileBgType: 'transparent' | 'color';
@@ -51,6 +52,7 @@ export default class QuickLinksWebPart extends BaseClientSideWebPart<IQuickLinks
         hasTeamsContext: !!this.context.sdks.microsoftTeams,
         userDisplayName: this.context.pageContext.user.displayName,
         quickLinks: this.properties.quickLinks || [],
+        listLinks: this.properties.listLinks || [],
         webPartBgType: this.properties.webPartBgType || 'transparent',
         webPartBgColor: this.properties.webPartBgColor || '#ffffff',
         tileBgType: this.properties.tileBgType || 'color',
@@ -196,6 +198,46 @@ export default class QuickLinksWebPart extends BaseClientSideWebPart<IQuickLinks
                     {
                       id: 'iconUrl',
                       title: 'Logo',
+                      type: CustomCollectionFieldType.custom,
+                      onCustomRender: (field, value, onUpdate, item, itemId) => {
+                        return React.createElement(CollectionFilePicker, {
+                          context: this.context,
+                          value: value || '',
+                          onChange: (url: string) => {
+                            onUpdate(field.id, url);
+                          }
+                        });
+                      }
+                    }
+                  ],
+                  disabled: false
+                }),
+                PropertyFieldCollectionData('listLinks', {
+                  key: 'listLinks',
+                  label: 'List Links Data',
+                  panelHeader: 'Manage List Links',
+                  manageBtnLabel: 'Manage List Links',
+                  saveBtnLabel: 'Save',
+                  saveAndAddBtnLabel: 'Save & Add Another',
+                  cancelBtnLabel: 'Cancel',
+                  enableSorting: true,
+                  value: this.properties.listLinks,
+                  fields: [
+                    {
+                      id: 'title',
+                      title: 'Title',
+                      type: CustomCollectionFieldType.string,
+                      required: true
+                    },
+                    {
+                      id: 'url',
+                      title: 'URL',
+                      type: CustomCollectionFieldType.string,
+                      required: true
+                    },
+                    {
+                      id: 'iconUrl',
+                      title: 'Icon',
                       type: CustomCollectionFieldType.custom,
                       onCustomRender: (field, value, onUpdate, item, itemId) => {
                         return React.createElement(CollectionFilePicker, {

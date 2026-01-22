@@ -11,6 +11,7 @@ export interface IQuickLinksProps {
   hasTeamsContext: boolean;
   userDisplayName: string;
   quickLinks: IQuickLink[];
+  listLinks: IQuickLink[]; // List-style links below tiles
   webPartBgType: 'transparent' | 'color';
   webPartBgColor: string;
   tileBgType: 'transparent' | 'color';

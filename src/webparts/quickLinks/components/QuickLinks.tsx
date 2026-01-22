@@ -53,6 +53,44 @@ export default class QuickLinks extends React.Component<IQuickLinksProps> {
             <div>Please configure Quick Links in the properties pane.</div>
           )}
         </div>
+
+        {/* List Links Section */}
+        {this.props.listLinks && this.props.listLinks.length > 0 && (
+          <div className={styles.list}>
+            {this.props.listLinks.map((link, index) => (
+              <a
+                key={index}
+                href={link.url}
+                className={styles.listItem}
+                target="_blank"
+                rel="noreferrer"
+                style={{
+                  backgroundColor: tileBg,
+                  borderColor: tileBorder,
+                  borderRadius: `${this.props.tileBorderRadius}px`,
+                  boxShadow: this.props.tileShadow ? '0 4px 4px -1px rgba(0, 0, 0, 0.08)' : 'none'
+                }}
+              >
+                {link.iconUrl && (
+                  <img
+                    src={link.iconUrl}
+                    className={styles.listIcon}
+                    alt={link.title}
+                  />
+                )}
+                <span
+                  className={styles.listTitle}
+                  style={{
+                    color: this.props.titleColor || '#333333',
+                    fontSize: `${this.props.titleFontSize || 14}px`
+                  }}
+                >
+                  {link.title}
+                </span>
+              </a>
+            ))}
+          </div>
+        )}
       </section>
     );
   }
