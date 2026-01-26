@@ -36,8 +36,8 @@ const resizeImageIfNeeded = (base64: string): Promise<string> => {
             const ctx = canvas.getContext('2d');
             if (ctx) {
                 ctx.drawImage(img, 0, 0, newWidth, newHeight);
-                // Convert to JPEG with 85% quality for smaller size
-                const resizedBase64 = canvas.toDataURL('image/jpeg', 0.85);
+                // Convert to PNG to preserve transparency
+                const resizedBase64 = canvas.toDataURL('image/png');
                 resolve(resizedBase64);
             } else {
                 resolve(base64); // Fallback if canvas fails
